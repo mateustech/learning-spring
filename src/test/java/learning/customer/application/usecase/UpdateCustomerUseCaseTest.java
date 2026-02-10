@@ -12,6 +12,8 @@ import learning.customer.domain.exception.DuplicateGithubUsernameException;
 import learning.customer.infrastructure.github.GitHubClient;
 import learning.customer.infrastructure.github.GitHubProfile;
 import learning.customer.infrastructure.persistence.CustomerJpaRepository;
+import learning.customer.usecases.UpdateCustomerUseCase;
+
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

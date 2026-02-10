@@ -1,14 +1,15 @@
 package learning.customer.presentation.rest;
 
-import learning.customer.application.usecase.ActivateCustomerUseCase;
-import learning.customer.application.usecase.CreateCustomerUseCase;
-import learning.customer.application.usecase.DeactivateCustomerUseCase;
-import learning.customer.application.usecase.DeleteCustomerUseCase;
-import learning.customer.application.usecase.GetCustomerByIdUseCase;
-import learning.customer.application.usecase.ListCustomersUseCase;
-import learning.customer.application.usecase.UpdateCustomerUseCase;
 import learning.customer.presentation.rest.dto.CustomerRequest;
 import learning.customer.presentation.rest.dto.CustomerResponse;
+import learning.customer.usecases.ActivateCustomerUseCase;
+import learning.customer.usecases.CreateCustomerUseCase;
+import learning.customer.usecases.DeactivateCustomerUseCase;
+import learning.customer.usecases.DeleteCustomerUseCase;
+import learning.customer.usecases.GetCustomerByIdUseCase;
+import learning.customer.usecases.ListCustomersUseCase;
+import learning.customer.usecases.UpdateCustomerUseCase;
+
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package learning.customer.application.usecase;
+package learning.customer.usecases;
 
 import learning.customer.domain.model.Customer;
 import learning.customer.domain.exception.CustomerNotFoundException;
@@ -7,18 +7,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class DeactivateCustomerUseCase {
+public class DeleteCustomerUseCase {
 
     private final CustomerJpaRepository customerRepository;
 
-    public DeactivateCustomerUseCase(CustomerJpaRepository customerRepository) {
+    public DeleteCustomerUseCase(CustomerJpaRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
     @Transactional
-    public Customer execute(Long id) {
+    public void execute(Long id) {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
-        customer.deactivate();
-        return customerRepository.save(customer);
+        customerRepository.delete(customer);
     }
 }

@@ -1,22 +1,22 @@
-package learning.customer.application.usecase;
+package learning.customer.usecases;
 
 import learning.customer.domain.model.Customer;
-import learning.customer.domain.exception.CustomerNotFoundException;
 import learning.customer.infrastructure.persistence.CustomerJpaRepository;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class GetCustomerByIdUseCase {
+public class ListCustomersUseCase {
 
     private final CustomerJpaRepository customerRepository;
 
-    public GetCustomerByIdUseCase(CustomerJpaRepository customerRepository) {
+    public ListCustomersUseCase(CustomerJpaRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
     @Transactional(readOnly = true)
-    public Customer execute(Long id) {
-        return customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
+    public List<Customer> execute(boolean activeOnly) {
+        return activeOnly ? customerRepository.findByActiveTrue() : customerRepository.findAll();
     }
 }

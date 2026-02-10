@@ -1,6 +1,7 @@
-package learning.customer.application.usecase;
+package learning.customer.usecases;
 
 import learning.customer.domain.model.Customer;
+import learning.customer.domain.exception.CustomerNotFoundException;
 import learning.customer.domain.exception.DuplicateEmailException;
 import learning.customer.domain.exception.DuplicateGithubUsernameException;
 import learning.customer.infrastructure.github.GitHubClient;
@@ -11,30 +12,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class CreateCustomerUseCase {
+public class UpdateCustomerUseCase {
 
     private final CustomerJpaRepository customerRepository;
     private final GitHubClient gitHubClient;
 
-    public CreateCustomerUseCase(CustomerJpaRepository customerRepository, GitHubClient gitHubClient) {
+    public UpdateCustomerUseCase(CustomerJpaRepository customerRepository, GitHubClient gitHubClient) {
         this.customerRepository = customerRepository;
         this.gitHubClient = gitHubClient;
     }
 
     @Transactional
-    public Customer execute(String email, String githubUsername) {
+    public Customer execute(Long id, String email, String githubUsername) {
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
         String normalizedEmail = normalizeEmail(email);
         GitHubProfile profile = gitHubClient.fetchProfile(normalizeGithubUsername(githubUsername));
         String normalizedGithubUsername = profile.login().toLowerCase(Locale.ROOT);
 
-        if (customerRepository.existsByEmail(normalizedEmail)) {
+        var customerWithEmail = customerRepository.findByEmail(normalizedEmail);
+        if (customerWithEmail.isPresent() && !customerWithEmail.get().getId().equals(id)) {
             throw new DuplicateEmailException(normalizedEmail);
         }
-        if (customerRepository.existsByGithubUsername(normalizedGithubUsername)) {
+
+        var customerWithGithub = customerRepository.findByGithubUsername(normalizedGithubUsername);
+        if (customerWithGithub.isPresent() && !customerWithGithub.get().getId().equals(id)) {
             throw new DuplicateGithubUsernameException(normalizedGithubUsername);
         }
 
-        Customer customer = new Customer();
         customer.setName(profile.displayName());
         customer.setEmail(normalizedEmail);
         customer.setGithubUsername(normalizedGithubUsername);
