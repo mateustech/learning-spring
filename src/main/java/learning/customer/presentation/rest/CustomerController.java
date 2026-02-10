@@ -11,6 +11,9 @@ import learning.customer.usecases.ListCustomersUseCase;
 import learning.customer.usecases.UpdateCustomerUseCase;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +34,8 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
+
+    private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
 
     private final CreateCustomerUseCase createCustomerUseCase;
     private final ListCustomersUseCase listCustomersUseCase;
@@ -60,6 +65,12 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<CustomerResponse> create(@Valid @RequestBody CustomerRequest request) {
+        log.info(
+            "event=http_customer_create_received correlationId={} email={} githubUsername={}",
+            MDC.get("correlationId"),
+            request.email(),
+            request.githubUsername()
+        );
         var customer = createCustomerUseCase.execute(request.email(), request.githubUsername());
         var location = ServletUriComponentsBuilder
             .fromCurrentRequest()
@@ -71,6 +82,11 @@ public class CustomerController {
 
     @GetMapping
     public List<CustomerResponse> list(@RequestParam(defaultValue = "false") boolean activeOnly) {
+        log.info(
+            "event=http_customer_list_received correlationId={} activeOnly={}",
+            MDC.get("correlationId"),
+            activeOnly
+        );
         var customers = listCustomersUseCase.execute(activeOnly);
         return customers.stream().map(CustomerResponse::from).toList();
     }
