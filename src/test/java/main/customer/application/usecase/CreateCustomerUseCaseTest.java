@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import main.customer.domain.model.Customer;
 import main.customer.domain.exception.DuplicateEmailException;
 import main.customer.domain.exception.DuplicateGithubUsernameException;
-import main.customer.infrastructure.messaging.CustomerCreatedEventPublisher;
+import main.customer.contracts.CustomerEventPublisher;
 import main.customer.infrastructure.persistence.CustomerJpaRepository;
 import main.customer.usecases.CreateCustomerUseCase;
 
@@ -28,7 +28,7 @@ class CreateCustomerUseCaseTest {
     private CustomerJpaRepository customerRepository;
 
     @Mock
-    private CustomerCreatedEventPublisher eventPublisher;
+    private CustomerEventPublisher eventPublisher;
 
     @InjectMocks
     private CreateCustomerUseCase createCustomerUseCase;

@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import main.customer.domain.model.Customer;
 import main.customer.domain.exception.CustomerNotFoundException;
 import main.customer.domain.exception.DuplicateGithubUsernameException;
-import main.customer.infrastructure.github.GitHubClient;
+import main.customer.contracts.GitHubGateway;
 import main.customer.infrastructure.github.GitHubProfile;
 import main.customer.infrastructure.persistence.CustomerJpaRepository;
 import main.customer.usecases.UpdateCustomerUseCase;
@@ -29,7 +29,7 @@ class UpdateCustomerUseCaseTest {
     private CustomerJpaRepository customerRepository;
 
     @Mock
-    private GitHubClient gitHubClient;
+    private GitHubGateway gitHubGateway;
 
     @InjectMocks
     private UpdateCustomerUseCase updateCustomerUseCase;
@@ -43,7 +43,7 @@ class UpdateCustomerUseCaseTest {
         existing.setName("Old Name");
 
         when(customerRepository.findById(1L)).thenReturn(Optional.of(existing));
-        when(gitHubClient.fetchProfile("newUser")).thenReturn(new GitHubProfile("newUser", "New Name"));
+        when(gitHubGateway.fetchProfile("newUser")).thenReturn(new GitHubProfile("newUser", "New Name"));
         when(customerRepository.findByEmail("new@acme.com")).thenReturn(Optional.empty());
         when(customerRepository.findByGithubUsername("newuser")).thenReturn(Optional.empty());
         when(customerRepository.save(any(Customer.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -75,7 +75,7 @@ class UpdateCustomerUseCaseTest {
         another.setGithubUsername("octocat");
 
         when(customerRepository.findById(1L)).thenReturn(Optional.of(target));
-        when(gitHubClient.fetchProfile("octocat")).thenReturn(new GitHubProfile("octocat", "The Octocat"));
+        when(gitHubGateway.fetchProfile("octocat")).thenReturn(new GitHubProfile("octocat", "The Octocat"));
         when(customerRepository.findByEmail("target@acme.com")).thenReturn(Optional.of(target));
         when(customerRepository.findByGithubUsername("octocat")).thenReturn(Optional.of(another));
 

@@ -3,8 +3,8 @@ package main.customer.usecases;
 import main.customer.domain.model.Customer;
 import main.customer.domain.exception.DuplicateEmailException;
 import main.customer.domain.exception.DuplicateGithubUsernameException;
+import main.customer.contracts.CustomerEventPublisher;
 import main.customer.infrastructure.messaging.CustomerCreatedEvent;
-import main.customer.infrastructure.messaging.CustomerCreatedEventPublisher;
 import main.customer.infrastructure.persistence.CustomerJpaRepository;
 import java.util.Locale;
 import java.util.UUID;
@@ -20,11 +20,11 @@ public class CreateCustomerUseCase {
     private static final Logger log = LoggerFactory.getLogger(CreateCustomerUseCase.class);
 
     private final CustomerJpaRepository customerRepository;
-    private final CustomerCreatedEventPublisher eventPublisher;
+    private final CustomerEventPublisher eventPublisher;
 
     public CreateCustomerUseCase(
         CustomerJpaRepository customerRepository,
-        CustomerCreatedEventPublisher eventPublisher
+        CustomerEventPublisher eventPublisher
     ) {
         this.customerRepository = customerRepository;
         this.eventPublisher = eventPublisher;

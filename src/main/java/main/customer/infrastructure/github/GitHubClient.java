@@ -1,5 +1,6 @@
 package main.customer.infrastructure.github;
 
+import main.customer.contracts.GitHubGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -9,7 +10,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 @Component
-public class GitHubClient {
+public class GitHubClient implements GitHubGateway {
 
     private static final Logger log = LoggerFactory.getLogger(GitHubClient.class);
 
@@ -23,6 +24,7 @@ public class GitHubClient {
             .build();
     }
 
+    @Override
     public GitHubProfile fetchProfile(String username) {
         try {
             log.info("event=github_fetch_started githubUsername={}", username);

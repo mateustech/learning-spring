@@ -4,7 +4,7 @@ import main.customer.domain.model.Customer;
 import main.customer.domain.exception.CustomerNotFoundException;
 import main.customer.domain.exception.DuplicateEmailException;
 import main.customer.domain.exception.DuplicateGithubUsernameException;
-import main.customer.infrastructure.github.GitHubClient;
+import main.customer.contracts.GitHubGateway;
 import main.customer.infrastructure.github.GitHubProfile;
 import main.customer.infrastructure.persistence.CustomerJpaRepository;
 import java.util.Locale;
@@ -15,18 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateCustomerUseCase {
 
     private final CustomerJpaRepository customerRepository;
-    private final GitHubClient gitHubClient;
+    private final GitHubGateway gitHubGateway;
 
-    public UpdateCustomerUseCase(CustomerJpaRepository customerRepository, GitHubClient gitHubClient) {
+    public UpdateCustomerUseCase(CustomerJpaRepository customerRepository, GitHubGateway gitHubGateway) {
         this.customerRepository = customerRepository;
-        this.gitHubClient = gitHubClient;
+        this.gitHubGateway = gitHubGateway;
     }
 
     @Transactional
     public Customer execute(Long id, String email, String githubUsername) {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
         String normalizedEmail = normalizeEmail(email);
-        GitHubProfile profile = gitHubClient.fetchProfile(normalizeGithubUsername(githubUsername));
+        GitHubProfile profile = gitHubGateway.fetchProfile(normalizeGithubUsername(githubUsername));
         String normalizedGithubUsername = profile.login().toLowerCase(Locale.ROOT);
 
         var customerWithEmail = customerRepository.findByEmail(normalizedEmail);

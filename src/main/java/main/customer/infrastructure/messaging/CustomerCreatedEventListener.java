@@ -1,6 +1,6 @@
 package main.customer.infrastructure.messaging;
 
-import main.customer.infrastructure.github.GitHubClient;
+import main.customer.contracts.GitHubGateway;
 import main.customer.infrastructure.github.GitHubUserNotFoundException;
 import main.customer.infrastructure.persistence.CustomerJpaRepository;
 import java.util.Locale;
@@ -17,11 +17,11 @@ public class CustomerCreatedEventListener {
     private static final Logger log = LoggerFactory.getLogger(CustomerCreatedEventListener.class);
 
     private final CustomerJpaRepository customerRepository;
-    private final GitHubClient gitHubClient;
+    private final GitHubGateway gitHubGateway;
 
-    public CustomerCreatedEventListener(CustomerJpaRepository customerRepository, GitHubClient gitHubClient) {
+    public CustomerCreatedEventListener(CustomerJpaRepository customerRepository, GitHubGateway gitHubGateway) {
         this.customerRepository = customerRepository;
-        this.gitHubClient = gitHubClient;
+        this.gitHubGateway = gitHubGateway;
     }
 
     @RabbitListener(queues = CustomerMessagingConfig.CREATED_QUEUE)
@@ -49,7 +49,7 @@ public class CustomerCreatedEventListener {
         }
 
         try {
-            var profile = gitHubClient.fetchProfile(event.githubUsername());
+            var profile = gitHubGateway.fetchProfile(event.githubUsername());
             var customer = customerOpt.get();
             customer.setName(profile.displayName());
             customer.setGithubUsername(profile.login().toLowerCase(Locale.ROOT));

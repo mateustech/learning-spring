@@ -1,12 +1,13 @@
 package main.customer.infrastructure.messaging;
 
+import main.customer.contracts.CustomerEventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CustomerCreatedEventPublisher {
+public class CustomerCreatedEventPublisher implements CustomerEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(CustomerCreatedEventPublisher.class);
 
@@ -16,6 +17,7 @@ public class CustomerCreatedEventPublisher {
         this.rabbitTemplate = rabbitTemplate;
     }
 
+    @Override
     public void publish(CustomerCreatedEvent event) {
         log.info(
             "event=customer_created_event_publish_started correlationId={} customerId={} githubUsername={} exchange={} routingKey={}",
